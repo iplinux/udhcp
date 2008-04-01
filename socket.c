@@ -53,7 +53,9 @@ int read_interface(char *interface, int *ifindex, uint32_t *addr, uint8_t *arp)
 	memset(&ifr, 0, sizeof(struct ifreq));
 	if((fd = socket(AF_INET, SOCK_RAW, IPPROTO_RAW)) >= 0) {
 		ifr.ifr_addr.sa_family = AF_INET;
-		strcpy(ifr.ifr_name, interface);
+		//closes http://bugs.debian.org/283582
+		//strcpy(ifr.ifr_name, interface);
+		strncpy(ifr.ifr_name, interface, IFNAMSIZ-1);
 
 		if (addr) {
 			if (ioctl(fd, SIOCGIFADDR, &ifr) == 0) {
@@ -62,6 +64,7 @@ int read_interface(char *interface, int *ifindex, uint32_t *addr, uint8_t *arp)
 				DEBUG(LOG_INFO, "%s (our ip) = %s", ifr.ifr_name, inet_ntoa(our_ip->sin_addr));
 			} else {
 				LOG(LOG_ERR, "SIOCGIFADDR failed, is the interface up and configured?: %m");
+				close(fd);
 				return -1;
 			}
 		}
@@ -71,6 +74,7 @@ int read_interface(char *interface, int *ifindex, uint32_t *addr, uint8_t *arp)
 			*ifindex = ifr.ifr_ifindex;
 		} else {
 			LOG(LOG_ERR, "SIOCGIFINDEX failed!: %m");
+			close(fd);
 			return -1;
 		}
 		if (ioctl(fd, SIOCGIFHWADDR, &ifr) == 0) {
@@ -79,6 +83,7 @@ int read_interface(char *interface, int *ifindex, uint32_t *addr, uint8_t *arp)
 				arp[0], arp[1], arp[2], arp[3], arp[4], arp[5]);
 		} else {
 			LOG(LOG_ERR, "SIOCGIFHWADDR failed!: %m");
+			close(fd);
 			return -1;
 		}
 	} else {

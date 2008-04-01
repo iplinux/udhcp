@@ -1,0 +1,8 @@
+#!/bin/sh -e
+
+#killall udhcpd || true Really we do that better in prerm
+
+if [ "$1" = purge ]; then
+	update-rc.d udhcpd remove >/dev/null
+	rm -rf /etc/udhcpd.conf || true
+fi

@@ -1,0 +1,118 @@
+#!/usr/bin/make -f
+
+version=$(shell dpkg-parsechangelog | grep ^Version:.* | cut -d ' ' -f 2)
+architecture=$(shell dpkg --print-architecture)
+
+build:
+	$(checkdir)
+	$(MAKE)
+	touch build
+
+clean:
+	$(checkdir)
+	-$(MAKE) -i clean
+	-rm -rf build debian/tmp debian/files debian/substvars
+
+binary-indep: checkroot build
+	$(checkdir)
+
+binary-arch: checkroot build
+	$(checkdir)
+	rm -fr debian/tmp
+
+	# Build udhcpc package.
+	install -d -m 755 debian/tmp/DEBIAN
+	install -m 644 debian/conffiles.udhcpc debian/tmp/DEBIAN/conffiles
+
+	install -d -m 755 debian/tmp/usr/share/doc/udhcpc
+	#install -m 644 README debian/tmp/usr/share/doc/udhcpc
+	install -m 644 README.udhcpc debian/tmp/usr/share/doc/udhcpc/README
+	install -m 644 ChangeLog debian/tmp/usr/share/doc/udhcpc/changelog
+	install -m 644 debian/changelog debian/tmp/usr/share/doc/udhcpc/changelog.Debian
+	gzip -9v debian/tmp/usr/share/doc/udhcpc/*
+	install -m 644 debian/copyright debian/tmp/usr/share/doc/udhcpc
+
+	install -d -m 755 debian/tmp/usr/share/man/man8
+	install -m 644 udhcpc.8 debian/tmp/usr/share/man/man8
+	gzip -9v debian/tmp/usr/share/man/man8/udhcpc.8
+
+	install -d -m 755 debian/tmp/sbin
+	install -m 755 udhcpc debian/tmp/sbin/udhcpc
+	strip --remove-section=.comment --remove-section=.note --strip-unneeded debian/tmp/sbin/udhcpc
+
+	install -d -m 755 debian/tmp/etc/udhcpc
+	for name in leasefail bound deconfig renew script nak; do \
+		install -m 755 samples/sample.$$name debian/tmp/etc/udhcpc/default.$$name ; \
+	done
+
+	dpkg-shlibdeps udhcpc
+	dpkg-gencontrol -isp -pudhcpc
+	chown -R root.root debian/tmp
+	chmod -R go=rX debian/tmp
+	dpkg --build debian/tmp ..
+
+	rm -fr debian/tmp
+
+	# Build udhcpd package.
+	install -d -m 755 debian/tmp/DEBIAN
+	install -m 755 debian/postinst.udhcpd debian/tmp/DEBIAN/postinst
+	install -m 755 debian/postrm.udhcpd debian/tmp/DEBIAN/postrm
+	install -m 755 debian/prerm.udhcpd debian/tmp/DEBIAN/prerm
+	install -m 644 debian/conffiles.udhcpd debian/tmp/DEBIAN/conffiles
+
+	install -d -m 755 debian/tmp/usr/share/doc/udhcpd
+	#install -m 644 README debian/tmp/usr/share/doc/udhcpd
+	install -m 644 README.udhcpd debian/tmp/usr/share/doc/udhcpd/README
+	install -m 644 ChangeLog debian/tmp/usr/share/doc/udhcpd/changelog
+	install -m 644 debian/changelog debian/tmp/usr/share/doc/udhcpd/changelog.Debian
+	gzip -9v debian/tmp/usr/share/doc/udhcpd/*
+	install -m 644 debian/copyright debian/tmp/usr/share/doc/udhcpd
+
+	install -d -m 755 debian/tmp/usr/share/doc/udhcpd/examples
+	install -m 644 samples/udhcpd.conf debian/tmp/usr/share/doc/udhcpd/examples
+
+	install -d -m 755 debian/tmp/usr/share/man/man1
+	install -m 644 dumpleases.1 debian/tmp/usr/share/man/man1
+	gzip -9v debian/tmp/usr/share/man/man1/dumpleases.1
+
+	install -d -m 755 debian/tmp/usr/share/man/man5
+	install -m 644 udhcpd.conf.5 debian/tmp/usr/share/man/man5
+	gzip -9v debian/tmp/usr/share/man/man5/udhcpd.conf.5
+
+	install -d -m 755 debian/tmp/usr/share/man/man8
+	install -m 644 udhcpd.8 debian/tmp/usr/share/man/man8
+	gzip -9v debian/tmp/usr/share/man/man8/udhcpd.8
+
+	install -d -m 755 debian/tmp/usr/sbin
+	install -m 755 udhcpd debian/tmp/usr/sbin/udhcpd
+	strip --remove-section=.comment --remove-section=.note --strip-unneeded debian/tmp/usr/sbin/udhcpd
+
+	install -d -m 755 debian/tmp/usr/bin
+	install -m 755 dumpleases debian/tmp/usr/bin/dumpleases
+	strip --remove-section=.comment --remove-section=.note --strip-unneeded debian/tmp/usr/bin/dumpleases
+
+	install -d -m 755 debian/tmp/etc/init.d
+	install -m 755 debian/udhcpd debian/tmp/etc/init.d
+	
+	mkdir -p debian/tmp/var/lib/misc
+	touch debian/tmp/var/lib/misc/udhcpd.leases
+
+	dpkg-shlibdeps udhcpd
+	dpkg-gencontrol -isp -pudhcpd
+	chown -R root.root debian/tmp
+	chmod -R go=rX debian/tmp
+	dpkg --build debian/tmp ..
+
+	rm -fr debian/tmp
+
+define checkdir
+	test -f dhcpc.c -a -f debian/rules
+endef
+
+binary: binary-indep binary-arch
+
+checkroot:
+	$(checkdir)
+	test root = "`whoami`"
+
+.PHONY: binary binary-arch binary-indep clean checkroot

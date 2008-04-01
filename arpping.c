@@ -73,7 +73,9 @@ int arpping(uint32_t yiaddr, uint32_t ip, uint8_t *mac, char *interface)
 	memcpy(arp.tInaddr, &yiaddr, sizeof(yiaddr));	/* target IP address */
 
 	memset(&addr, 0, sizeof(addr));
-	strcpy(addr.sa_data, interface);
+	//closes http://bugs.debian.org/283582
+	//strcpy(addr.sa_data, interface);
+	strncpy(addr.sa_data, interface, sizeof(addr.sa_data)-1);
 	if (sendto(s, &arp, sizeof(arp), 0, &addr, sizeof(addr)) < 0)
 		rv = 0;
 

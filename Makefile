@@ -9,13 +9,13 @@ USRSHAREDIR = $(DESTDIR)${prefix}/share
 
 # Uncomment this to get a shared binary. Call as udhcpd for the server,
 # and udhcpc for the client
-COMBINED_BINARY=1
+#COMBINED_BINARY=1
 
 # Uncomment this for extra output and to compile with debugging symbols
 #UDHCP_DEBUG=1
 
 # Uncomment this to output messages to syslog, otherwise, messages go to stdout
-#CFLAGS += -DUDHCP_SYSLOG
+CFLAGS += -DUDHCP_SYSLOG
 
 #CROSS_COMPILE=arm-uclibc-
 CC = $(CROSS_COMPILE)gcc

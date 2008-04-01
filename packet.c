@@ -178,7 +178,10 @@ int kernel_packet(struct dhcpMessage *payload, uint32_t source_ip, int source_po
 		return -1;
 
 	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *) &n, sizeof(n)) == -1)
+	    {
+		close(fd);
 		return -1;
+	    }
 
 	memset(&client, 0, sizeof(client));
 	client.sin_family = AF_INET;
@@ -186,7 +189,10 @@ int kernel_packet(struct dhcpMessage *payload, uint32_t source_ip, int source_po
 	client.sin_addr.s_addr = source_ip;
 
 	if (bind(fd, (struct sockaddr *)&client, sizeof(struct sockaddr)) == -1)
+	    {
+		close(fd);
 		return -1;
+	    }
 
 	memset(&client, 0, sizeof(client));
 	client.sin_family = AF_INET;
@@ -194,7 +200,10 @@ int kernel_packet(struct dhcpMessage *payload, uint32_t source_ip, int source_po
 	client.sin_addr.s_addr = dest_ip;
 
 	if (connect(fd, (struct sockaddr *)&client, sizeof(struct sockaddr)) == -1)
+	    {
+		close(fd);
 		return -1;
+	    }
 
 	result = write(fd, payload, sizeof(struct dhcpMessage));
 	close(fd);

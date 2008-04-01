@@ -1,0 +1,34 @@
+Source: udhcp
+Section: net
+Priority: optional
+Maintainer: Eric Van Buggenhaut <ericvb@debian.org>
+Standards-Version: 3.6.2
+
+Package: udhcpc
+Section: net
+Architecture: any
+Provides: dhcp-client
+Depends: ${shlibs:Depends}
+Suggests: resolvconf
+Description: very small DHCP client
+ DHCP is a protocol like BOOTP (actually dhcpd includes much of
+ the functionality of BOOTPD!). It assigns IP addresses to clients
+ based on lease times.
+ This package is primarily geared towards embedded systems. It does however,
+ strive to be fully functional, and RFC compliant.
+ .
+ This is the client-side application.
+
+Package: udhcpd
+Section: net
+Architecture: any
+Provides: dhcp3-server
+Depends: ${shlibs:Depends}
+Description: very small DHCP server
+ DHCP is a protocol like BOOTP (actually dhcpd includes much of
+ the functionality of BOOTPD!). It assigns IP addresses to clients
+ based on lease times.
+ This package is primarily geared towards embedded systems. It does however,
+ strive to be fully functional, and RFC compliant.
+ .
+ This is the server-side application.

@@ -1,0 +1,18 @@
+This is Debian GNU's prepackaged version of udhcp, a program which
+provides a DHCP client and server.
+
+This package was originally put together by Matt Kraai <kraai@debian.org>,
+from the sources obtained from http://udhcp.busybox.net/.
+
+Program Copyright (C) 2001  Russ Dill
+Modifications for Debian Copyright (C) 2001, 2002  Matt Kraai
+Modifications for Debian Copyright (C) 2003 Eric Van Buggenhaut
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+On Debian systems, a copy of the GPL version 2 can be found in
+
+/usr/share/common-licenses/GPL-2

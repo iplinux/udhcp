@@ -1,0 +1,6 @@
+/etc/udhcpc/default.bound
+/etc/udhcpc/default.deconfig
+/etc/udhcpc/default.leasefail
+/etc/udhcpc/default.renew
+/etc/udhcpc/default.script
+/etc/udhcpc/default.nak

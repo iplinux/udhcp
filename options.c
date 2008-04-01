@@ -28,7 +28,10 @@ struct dhcp_option dhcp_options[] = {
 	{"bootsize",	OPTION_U16,				0x0d},
 	{"domain",	OPTION_STRING | OPTION_REQ,		0x0f},
 	{"swapsvr",	OPTION_IP,				0x10},
-	{"rootpath",	OPTION_STRING,				0x11},
+	//We had the possibility for the client to ask for a rootpath
+	//closes http://bugs.debian.org/279110 (ericvb@debian.org)
+	//{"rootpath",	OPTION_STRING,				0x11},
+	{"rootpath",	OPTION_STRING | OPTION_REQ,		0x11},
 	{"ipttl",	OPTION_U8,				0x17},
 	{"mtu",		OPTION_U16,				0x1a},
 	{"broadcast",	OPTION_IP | OPTION_REQ,			0x1c},
@@ -43,6 +46,7 @@ struct dhcp_option dhcp_options[] = {
 	{"message",	OPTION_STRING,				0x38},
 	{"tftp",	OPTION_STRING,				0x42},
 	{"bootfile",	OPTION_STRING,				0x43},
+	{"wpad",	OPTION_STRING,				0xfc},
 	{"",		0x00,				0x00}
 };
 
