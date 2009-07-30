@@ -1,15 +1,15 @@
 Source: udhcp
-Section: net
+Section: core
 Priority: optional
-Maintainer: Eric Van Buggenhaut <ericvb@debian.org>
+Maintainer: Yauhen Kharuzhy <jekhor@gmail.com>
 Standards-Version: 3.6.2
 
 Package: udhcpc
-Section: net
+Section: core
 Architecture: any
 Provides: dhcp-client
 Depends: ${shlibs:Depends}
-Suggests: resolvconf
+#Suggests: resolvconf
 Description: very small DHCP client
  DHCP is a protocol like BOOTP (actually dhcpd includes much of
  the functionality of BOOTPD!). It assigns IP addresses to clients
@@ -20,7 +20,7 @@ Description: very small DHCP client
  This is the client-side application.
 
 Package: udhcpd
-Section: net
+Section: core
 Architecture: any
 Provides: dhcp3-server
 Depends: ${shlibs:Depends}
